@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parrilla de Contenido Tributario — Instagram</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #EEF0F3;
+  --surface:   #FFFFFF;
+  --surface2:  #F4F5F7;
+  --border:    rgba(13,33,55,0.1);
+  --border2:   rgba(13,33,55,0.2);
+  --text:      #0D2137;
+  --text2:     #4A6080;
+  --text3:     #8A9BB0;
+  --radius:    10px;
+  --radius-lg: 14px;
+  --shadow:    0 1px 4px rgba(13,33,55,0.08), 0 4px 20px rgba(13,33,55,0.05);
+  --shadow-lg: 0 12px 40px rgba(13,33,55,0.16);
+  --navy:      #0D2137;
+  --navy2:     #1A3A5C;
+
+  --edu-bg: #E8F4FD; --edu-fg: #0A4A7A;
+  --inn-bg: #E6F9F2; --inn-fg: #0A5C3A;
+  --cer-bg: #FFF4E6; --cer-fg: #7A3F00;
+  --ins-bg: #F0EDF8; --ins-fg: #3A1F6E;
+
+  --pend-bg: #F2F0EA; --pend-fg: #5A5850;
+  --prod-bg: #FFF4E6; --prod-fg: #B06A00;
+  --list-bg: #E6F9F2; --list-fg: #0A5C3A;
+  --pub-bg:  #E8F4FD; --pub-fg:  #0A4A7A;
+}
+
+body {
+  font-family: 'IBM Plex Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── TOP BAR ────────────────────────────────────────── */
+.topbar {
+  background: var(--navy);
+  padding: 0 2rem;
+  display: flex; align-items: center; gap: 1rem;
+  height: 58px; position: sticky; top: 0; z-index: 50;
+  border-bottom: 2px solid var(--navy2);
+}
+.topbar-brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 600; font-size: 14px; color: white;
+  letter-spacing: -0.2px;
+}
+.brand-icon {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: linear-gradient(135deg, #1E6BB8, #0A4A7A);
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0;
+}
+.topbar-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.15); }
+.topbar-account {
+  font-size: 12px; color: rgba(255,255,255,0.55);
+  display: flex; align-items: center; gap: 5px;
+}
+.account-input {
+  border: none; background: transparent;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 12px; color: rgba(255,255,255,0.85);
+  outline: none; border-bottom: 1px dashed rgba(255,255,255,0.3);
+  min-width: 130px; padding: 1px 2px;
+}
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.btn-top {
+  display: flex; align-items: center; gap: 6px;
+  border: 1px solid rgba(255,255,255,0.2); border-radius: 8px;
+  padding: 6px 14px; font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  transition: all 0.15s; color: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.08);
+}
+.btn-top:hover { background: rgba(255,255,255,0.15); color: white; }
+
+/* ── MAIN ────────────────────────────────────────────── */
+.main { padding: 1.5rem 2rem 3rem; max-width: 1380px; margin: 0 auto; }
+
+/* ── CATEGORY FILTER STRIP ───────────────────────────── */
+.cat-strip { display: flex; gap: 6px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.cat-chip {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 14px; border-radius: 6px;
+  font-size: 11px; font-weight: 600; cursor: pointer;
+  transition: all 0.15s; border: 1.5px solid transparent;
+  letter-spacing: 0.1px; user-select: none;
+}
+.cat-chip:not(.active) { opacity: 0.5; filter: grayscale(0.2); }
+.cat-chip.active { opacity: 1; border-color: currentColor; }
+.cat-chip .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.chip-all  { background: var(--navy); color: white; }
+.chip-all .dot { background: white; }
+.chip-all:not(.active) { opacity: 0.65; }
+.chip-edu  { background: var(--edu-bg); color: var(--edu-fg); }
+.chip-inn  { background: var(--inn-bg); color: var(--inn-fg); }
+.chip-cer  { background: var(--cer-bg); color: var(--cer-fg); }
+.chip-ins  { background: var(--ins-bg); color: var(--ins-fg); }
+
+/* ── TOP ROW: nav + stats ────────────────────────────── */
+.top-row { display: flex; align-items: stretch; gap: 10px; margin-bottom: 1.25rem; }
+.month-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 0 16px;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: var(--shadow); flex-shrink: 0;
+}
+.nav-btn {
+  width: 32px; height: 32px; border-radius: 8px;
+  border: 1px solid var(--border2); background: transparent;
+  cursor: pointer; font-size: 18px; color: var(--text2);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.1s; font-family: inherit;
+}
+.nav-btn:hover { background: var(--surface2); color: var(--text); }
+.month-label {
+  font-size: 15px; font-weight: 600; min-width: 165px;
+  text-align: center; letter-spacing: -0.3px;
+}
+.stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; flex: 1; }
+.stat {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 12px 16px;
+  box-shadow: var(--shadow);
+}
+.stat-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px; font-weight: 500; }
+.stat-val { font-size: 28px; font-weight: 600; color: var(--text); letter-spacing: -1.5px; font-family: 'IBM Plex Mono', monospace; }
+
+/* ── CALENDAR ────────────────────────────────────────── */
+.calendar {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.cal-head {
+  display: grid; grid-template-columns: repeat(7,1fr);
+  background: var(--navy);
+}
+.cal-head-cell {
+  text-align: center; padding: 11px 4px;
+  font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.55);
+  text-transform: uppercase; letter-spacing: 0.8px;
+}
+.cal-head-cell:first-child,
+.cal-head-cell:last-child { color: rgba(168,196,220,0.75); }
+
+.cal-body { display: grid; grid-template-columns: repeat(7,1fr); }
+.cal-day {
+  border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  min-height: 108px; padding: 7px;
+  background: var(--surface); transition: background 0.1s;
+}
+.cal-day:nth-child(7n) { border-right: none; }
+.cal-day:nth-child(7n+1),
+.cal-day:nth-child(7n)   { background: #F8FAFD; }
+.cal-day.empty { background: var(--surface2); opacity: 0.4; pointer-events: none; }
+.cal-day.today .day-num-val {
+  background: var(--navy); color: white; border-radius: 50%;
+  width: 22px; height: 22px; display: inline-flex;
+  align-items: center; justify-content: center;
+}
+.day-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+.day-num-val { font-size: 12px; font-weight: 600; color: var(--text3); }
+.day-add {
+  font-size: 17px; color: var(--border2); cursor: pointer;
+  width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; transition: all 0.1s; opacity: 0; line-height: 1;
+}
+.cal-day:hover .day-add { opacity: 1; color: var(--text2); }
+.day-add:hover { background: var(--surface2); color: var(--text) !important; }
+
+.post-pill {
+  font-size: 10px; padding: 3px 7px; border-radius: 5px;
+  margin-bottom: 3px; cursor: pointer; font-weight: 500;
+  display: flex; align-items: center; gap: 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: opacity 0.1s;
+}
+.post-pill:hover { opacity: 0.75; }
+.post-pill .fmt-tag { font-size: 9px; font-family: 'IBM Plex Mono', monospace; opacity: 0.65; flex-shrink: 0; }
+.post-pill .pill-title { overflow: hidden; text-overflow: ellipsis; }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+.cat-edu { background: var(--edu-bg); color: var(--edu-fg); }
+.cat-inn { background: var(--inn-bg); color: var(--inn-fg); }
+.cat-cer { background: var(--cer-bg); color: var(--cer-fg); }
+.cat-ins { background: var(--ins-bg); color: var(--ins-fg); }
+
+/* ── RESUMEN POR CATEGORÍAS (bottom) ─────────────────── */
+.resumen-section {
+  margin-top: 1.75rem;
+}
+.resumen-title {
+  font-size: 11px; font-weight: 600; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.8px;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+}
+.resumen-title::after {
+  content: ''; flex: 1; height: 1px; background: var(--border2);
+}
+.resumen-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+
+.resumen-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+  box-shadow: var(--shadow); transition: transform 0.15s;
+}
+.resumen-card:hover { transform: translateY(-2px); }
+
+.resumen-card-header {
+  padding: 12px 16px 10px;
+  display: flex; align-items: flex-start; justify-content: space-between;
+}
+.resumen-cat-name {
+  font-size: 12px; font-weight: 600; line-height: 1.4;
+}
+.resumen-count {
+  font-size: 32px; font-weight: 600; font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: -2px; line-height: 1;
+}
+.resumen-label {
+  font-size: 10px; font-weight: 500; margin-top: 2px; opacity: 0.65;
+}
+
+.resumen-bar-wrap {
+  padding: 0 16px 14px;
+}
+.resumen-bar-track {
+  height: 5px; border-radius: 3px; background: rgba(0,0,0,0.06); overflow: hidden;
+}
+.resumen-bar-fill {
+  height: 100%; border-radius: 3px; transition: width 0.5s ease;
+}
+
+.resumen-formats {
+  border-top: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+.fmt-pill {
+  font-size: 10px; font-family: 'IBM Plex Mono', monospace;
+  padding: 2px 8px; border-radius: 4px; font-weight: 500;
+  display: flex; align-items: center; gap: 4px;
+}
+.fmt-count { font-weight: 600; }
+
+/* Colores por card */
+.card-edu .resumen-card-header { background: var(--edu-bg); }
+.card-edu .resumen-cat-name    { color: var(--edu-fg); }
+.card-edu .resumen-count       { color: var(--edu-fg); }
+.card-edu .resumen-bar-fill    { background: var(--edu-fg); }
+.card-edu .fmt-pill            { background: var(--edu-bg); color: var(--edu-fg); }
+
+.card-inn .resumen-card-header { background: var(--inn-bg); }
+.card-inn .resumen-cat-name    { color: var(--inn-fg); }
+.card-inn .resumen-count       { color: var(--inn-fg); }
+.card-inn .resumen-bar-fill    { background: var(--inn-fg); }
+.card-inn .fmt-pill            { background: var(--inn-bg); color: var(--inn-fg); }
+
+.card-cer .resumen-card-header { background: var(--cer-bg); }
+.card-cer .resumen-cat-name    { color: var(--cer-fg); }
+.card-cer .resumen-count       { color: var(--cer-fg); }
+.card-cer .resumen-bar-fill    { background: var(--cer-fg); }
+.card-cer .fmt-pill            { background: var(--cer-bg); color: var(--cer-fg); }
+
+.card-ins .resumen-card-header { background: var(--ins-bg); }
+.card-ins .resumen-cat-name    { color: var(--ins-fg); }
+.card-ins .resumen-count       { color: var(--ins-fg); }
+.card-ins .resumen-bar-fill    { background: var(--ins-fg); }
+.card-ins .fmt-pill            { background: var(--ins-bg); color: var(--ins-fg); }
+
+/* ── OVERLAYS / MODALS ───────────────────────────────── */
+.overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(13,33,55,0.45); backdrop-filter: blur(4px);
+  z-index: 200; align-items: center; justify-content: center;
+}
+.overlay.open { display: flex; }
+
+.modal {
+  background: var(--surface); border-radius: 16px;
+  border: 1px solid var(--border2); padding: 1.75rem;
+  width: 440px; max-width: 95vw; max-height: 92vh; overflow-y: auto;
+  box-shadow: var(--shadow-lg); animation: pop 0.18s ease;
+}
+@keyframes pop {
+  from { transform: scale(0.96) translateY(8px); opacity: 0; }
+  to   { transform: scale(1)    translateY(0);   opacity: 1; }
+}
+.modal-title {
+  font-size: 15px; font-weight: 600; margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: 8px;
+  padding-bottom: 1rem; border-bottom: 1px solid var(--border);
+}
+.form-row { margin-bottom: 14px; }
+.form-row label {
+  font-size: 10px; font-weight: 600; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.6px; display: block; margin-bottom: 5px;
+}
+.form-row input,
+.form-row select,
+.form-row textarea {
+  width: 100%; font-size: 13px; padding: 9px 12px;
+  border: 1px solid var(--border2); border-radius: 8px;
+  background: var(--surface); color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif; outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.form-row input:focus,
+.form-row select:focus,
+.form-row textarea:focus {
+  border-color: var(--navy2);
+  box-shadow: 0 0 0 3px rgba(26,58,92,0.08);
+}
+.form-row input[readonly] { background: var(--surface2); color: var(--text2); }
+.form-row textarea { resize: vertical; min-height: 68px; line-height: 1.55; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal-btns {
+  display: flex; gap: 8px; justify-content: flex-end;
+  margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);
+}
+.btn-cancel {
+  background: transparent; border: 1px solid var(--border2);
+  border-radius: 8px; padding: 8px 18px; font-size: 13px; cursor: pointer;
+  color: var(--text2); font-family: 'IBM Plex Sans', sans-serif; transition: background 0.1s;
+}
+.btn-cancel:hover { background: var(--surface2); }
+.btn-save {
+  background: var(--navy2); border: none; border-radius: 8px;
+  padding: 8px 22px; font-size: 13px; cursor: pointer; color: white;
+  font-weight: 600; font-family: 'IBM Plex Sans', sans-serif; transition: background 0.15s;
+}
+.btn-save:hover { background: var(--navy); }
+
+.detail-modal {
+  background: var(--surface); border-radius: 16px;
+  border: 1px solid var(--border2); padding: 1.75rem;
+  width: 380px; max-width: 95vw;
+  box-shadow: var(--shadow-lg); animation: pop 0.18s ease;
+}
+.d-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+.d-cat-badge { font-size: 11px; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+.d-status { font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+.d-title { font-size: 17px; font-weight: 600; margin-bottom: 14px; letter-spacing: -0.4px; line-height: 1.4; }
+.d-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.d-field .lbl { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+.d-field .val { font-size: 13px; color: var(--text); }
+.d-desc { font-size: 12px; color: var(--text2); line-height: 1.6; background: var(--surface2); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; }
+.d-actions { display: flex; gap: 8px; }
+.btn-del  { background: transparent; border: 1px solid #FCCACA; color: #7A1A1A; border-radius: 8px; padding: 7px 14px; font-size: 12px; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif; transition: background 0.1s; }
+.btn-del:hover { background: #FDEAEA; }
+.btn-edit { background: transparent; border: 1px solid var(--border2); color: var(--text2); border-radius: 8px; padding: 7px 14px; font-size: 12px; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif; transition: background 0.1s; }
+.btn-edit:hover { background: var(--surface2); }
+.btn-close-d { margin-left: auto; background: transparent; border: 1px solid var(--border); color: var(--text3); border-radius: 8px; padding: 7px 14px; font-size: 12px; cursor: pointer; font-family: 'IBM Plex Sans', sans-serif; }
+
+.toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: var(--navy); color: white; border-radius: 10px;
+  padding: 10px 20px; font-size: 13px; opacity: 0;
+  transition: all 0.22s; z-index: 999; pointer-events: none;
+  box-shadow: var(--shadow-lg);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+@media (max-width: 900px) {
+  .resumen-grid { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 600px) {
+  .main { padding: 1rem; }
+  .top-row { flex-direction: column; }
+  .stats { grid-template-columns: repeat(2,1fr); }
+  .resumen-grid { grid-template-columns: 1fr; }
+  .topbar { padding: 0 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="brand-icon">📋</div>
+    Parrilla Tributaria
+  </div>
+  <div class="topbar-sep"></div>
+  <div class="topbar-account">
+    @<input class="account-input" id="account-name" value="cuenta_institucional" placeholder="cuenta">
+  </div>
+  <div class="topbar-right">
+    <button class="btn-top" onclick="exportCSV()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Exportar CSV
+    </button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- CATEGORY FILTER STRIP -->
+  <div class="cat-strip">
+    <div class="cat-chip chip-all active" data-cat="Todos" onclick="setFilter('Todos',this)">
+      <span class="dot"></span> Todos
+    </div>
+    <div class="cat-chip chip-edu" data-cat="Educación tributaria" onclick="setFilter('Educación tributaria',this)">
+      <span class="dot"></span> Educación tributaria
+    </div>
+    <div class="cat-chip chip-inn" data-cat="Innovación tributaria" onclick="setFilter('Innovación tributaria',this)">
+      <span class="dot"></span> Innovación tributaria
+    </div>
+    <div class="cat-chip chip-cer" data-cat="Cercano y humano" onclick="setFilter('Cercano y humano',this)">
+      <span class="dot"></span> Cercano y humano
+    </div>
+    <div class="cat-chip chip-ins" data-cat="Institucional/Actualidad" onclick="setFilter('Institucional/Actualidad',this)">
+      <span class="dot"></span> Institucional / Actualidad
+    </div>
+  </div>
+
+  <!-- NAV + STATS -->
+  <div class="top-row">
+    <div class="month-card">
+      <button class="nav-btn" onclick="changeMonth(-1)">&#8249;</button>
+      <span class="month-label" id="month-label"></span>
+      <button class="nav-btn" onclick="changeMonth(1)">&#8250;</button>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Programados</div>
+        <div class="stat-val" id="st-total">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Reels</div>
+        <div class="stat-val" id="st-reels">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Carruseles</div>
+        <div class="stat-val" id="st-car">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Stories / Otros</div>
+        <div class="stat-val" id="st-other">0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALENDAR -->
+  <div class="calendar">
+    <div class="cal-head">
+      <div class="cal-head-cell">Dom</div>
+      <div class="cal-head-cell">Lun</div>
+      <div class="cal-head-cell">Mar</div>
+      <div class="cal-head-cell">Mié</div>
+      <div class="cal-head-cell">Jue</div>
+      <div class="cal-head-cell">Vie</div>
+      <div class="cal-head-cell">Sáb</div>
+    </div>
+    <div class="cal-body" id="cal-body"></div>
+  </div>
+
+  <!-- RESUMEN POR CATEGORÍAS -->
+  <div class="resumen-section">
+    <div class="resumen-title">Resumen por categoría</div>
+    <div class="resumen-grid" id="resumen-grid">
+      <!-- Generado por JS -->
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ADD/EDIT MODAL -->
+<div class="overlay" id="add-overlay">
+  <div class="modal">
+    <div class="modal-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span id="modal-title-text">Nuevo post</span>
+    </div>
+    <div class="form-row">
+      <label>Fecha</label>
+      <input type="text" id="f-date" readonly>
+    </div>
+    <div class="form-row">
+      <label>Título / Copy</label>
+      <input type="text" id="f-title" placeholder="Ej: ¿Sabes qué es el RUT? Te explicamos en 3 pasos">
+    </div>
+    <div class="form-grid">
+      <div class="form-row">
+        <label>Categoría</label>
+        <select id="f-cat">
+          <option value="Educación tributaria">Educación tributaria</option>
+          <option value="Innovación tributaria">Innovación tributaria</option>
+          <option value="Cercano y humano">Cercano y humano</option>
+          <option value="Institucional/Actualidad">Institucional/Actualidad</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Formato</label>
+        <select id="f-format">
+          <option value="Reel">🎬 Reel</option>
+          <option value="Carrusel">🖼 Carrusel</option>
+          <option value="Estático">📷 Foto estática</option>
+          <option value="Story">⭕ Story</option>
+          <option value="Live">📡 Live</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-row">
+        <label>Hora de publicación</label>
+        <input type="time" id="f-time" value="08:00">
+      </div>
+      <div class="form-row">
+        <label>Responsable</label>
+        <input type="text" id="f-owner" placeholder="Nombre del gestor">
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Descripción / Idea de contenido</label>
+      <textarea id="f-desc" placeholder="Brief, objetivo del post, referencias visuales, hashtags clave..."></textarea>
+    </div>
+    <div class="form-row">
+      <label>Estado de producción</label>
+      <select id="f-status">
+        <option value="Pendiente">Pendiente</option>
+        <option value="En producción">En producción</option>
+        <option value="Listo">Listo para publicar</option>
+        <option value="Publicado">Publicado</option>
+      </select>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeAddModal()">Cancelar</button>
+      <button class="btn-save"   onclick="savePost()">Guardar post</button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="overlay" id="detail-overlay">
+  <div class="detail-modal">
+    <div id="detail-content"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+const CATS = [
+  { key: 'Educación tributaria',    cls: 'card-edu', icon: '📘' },
+  { key: 'Innovación tributaria',   cls: 'card-inn', icon: '💡' },
+  { key: 'Cercano y humano',        cls: 'card-cer', icon: '🤝' },
+  { key: 'Institucional/Actualidad',cls: 'card-ins', icon: '🏛️' },
+];
+
+const CAT_CLASS = {
+  'Educación tributaria':    'cat-edu',
+  'Innovación tributaria':   'cat-inn',
+  'Cercano y humano':        'cat-cer',
+  'Institucional/Actualidad':'cat-ins'
+};
+const FMT_ABBR = {
+  Reel:'REEL', Carrusel:'CAR', 'Estático':'EST', Story:'STOR', Live:'LIVE'
+};
+const FMT_ICON = {
+  Reel:'🎬', Carrusel:'🖼', 'Estático':'📷', Story:'⭕', Live:'📡'
+};
+const STATUS_COLOR = {
+  'Pendiente':    '#8A9BB0',
+  'En producción':'#B06A00',
+  'Listo':        '#0A5C3A',
+  'Publicado':    '#0A4A7A'
+};
+
+const STORAGE_KEY = 'ig_tributaria_v2';
+let posts = {};
+try { const s = localStorage.getItem(STORAGE_KEY); if(s) posts = JSON.parse(s); } catch(e) {}
+function savePosts() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(posts)); } catch(e) {} }
+
+let now = new Date();
+let curYear = now.getFullYear(), curMonth = now.getMonth();
+let activeFilter = 'Todos', addingDay = null, editingId = null;
+
+function postKey(y,m,d) { return `${y}-${m}-${d}`; }
+
+function changeMonth(dir) {
+  curMonth += dir;
+  if(curMonth < 0)  { curMonth=11; curYear--; }
+  if(curMonth > 11) { curMonth=0;  curYear++; }
+  renderCal();
+}
+
+function setFilter(cat, el) {
+  activeFilter = cat;
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderCal();
+}
+
+function getAllPosts() {
+  return Object.values(posts).flat();
+}
+
+function renderCal() {
+  document.getElementById('month-label').textContent = `${MONTHS[curMonth]} ${curYear}`;
+  const firstDay    = new Date(curYear, curMonth, 1).getDay();
+  const daysInMonth = new Date(curYear, curMonth+1, 0).getDate();
+  const body = document.getElementById('cal-body');
+  body.innerHTML = '';
+
+  const all = getAllPosts();
+  let total=0, reels=0, cars=0, other=0;
+  all.forEach(p => {
+    total++;
+    if(p.format==='Reel') reels++;
+    else if(p.format==='Carrusel') cars++;
+    else other++;
+  });
+  document.getElementById('st-total').textContent = total;
+  document.getElementById('st-reels').textContent = reels;
+  document.getElementById('st-car').textContent   = cars;
+  document.getElementById('st-other').textContent = other;
+
+  // Empty cells before month start
+  for(let i=0; i<firstDay; i++) {
+    const e = document.createElement('div');
+    e.className = 'cal-day empty'; body.appendChild(e);
+  }
+
+  const today = new Date();
+  for(let d=1; d<=daysInMonth; d++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-day';
+    const isToday = today.getFullYear()===curYear && today.getMonth()===curMonth && today.getDate()===d;
+    if(isToday) cell.classList.add('today');
+
+    const top = document.createElement('div');
+    top.className = 'day-top';
+    top.innerHTML = `<span class="day-num-val">${d}</span>`;
+    const addBtn = document.createElement('span');
+    addBtn.className = 'day-add'; addBtn.innerHTML = '＋'; addBtn.title = 'Agregar post';
+    addBtn.onclick = ev => { ev.stopPropagation(); openAddModal(d); };
+    top.appendChild(addBtn);
+    cell.appendChild(top);
+
+    const key = postKey(curYear, curMonth, d);
+    const dayPosts = (posts[key]||[]).filter(p =>
+      activeFilter==='Todos' || p.cat===activeFilter);
+
+    dayPosts.forEach(p => {
+      const pill = document.createElement('div');
+      pill.className = `post-pill ${CAT_CLASS[p.cat]||''}`;
+      const sdot = p.status !== 'Pendiente'
+        ? `<span class="status-dot" style="background:${STATUS_COLOR[p.status]};"></span>` : '';
+      pill.innerHTML = `${sdot}<span class="fmt-tag">${FMT_ABBR[p.format]||''}</span><span class="pill-title">${p.title}</span>`;
+      pill.title = `${p.title} · ${p.time} · ${p.status}`;
+      pill.onclick = ev => { ev.stopPropagation(); showDetail(key, p.id); };
+      cell.appendChild(pill);
+    });
+
+    body.appendChild(cell);
+  }
+
+  renderResumen(all, total);
+}
+
+function renderResumen(all, total) {
+  const grid = document.getElementById('resumen-grid');
+  grid.innerHTML = '';
+
+  CATS.forEach(cat => {
+    const catPosts = all.filter(p => p.cat === cat.key);
+    const count    = catPosts.length;
+    const pct      = total > 0 ? Math.round((count / total) * 100) : 0;
+
+    // Count by format
+    const fmtCounts = {};
+    catPosts.forEach(p => {
+      fmtCounts[p.format] = (fmtCounts[p.format]||0) + 1;
+    });
+
+    // Format pills — only those with count > 0
+    const fmtHTML = Object.entries(fmtCounts)
+      .sort((a,b) => b[1]-a[1])
+      .map(([fmt, n]) => `
+        <span class="fmt-pill">
+          ${FMT_ICON[fmt]||''} <span class="fmt-count">${n}</span> ${fmt}
+        </span>`)
+      .join('');
+
+    const card = document.createElement('div');
+    card.className = `resumen-card ${cat.cls}`;
+    card.innerHTML = `
+      <div class="resumen-card-header">
+        <div>
+          <div class="resumen-cat-name">${cat.icon} ${cat.key}</div>
+          <div class="resumen-label">${pct}% del total</div>
+        </div>
+        <div class="resumen-count">${count}</div>
+      </div>
+      <div class="resumen-bar-wrap">
+        <div class="resumen-bar-track">
+          <div class="resumen-bar-fill" style="width:${pct}%"></div>
+        </div>
+      </div>
+      <div class="resumen-formats">
+        ${count === 0
+          ? '<span style="font-size:11px;color:var(--text3);font-style:italic;">Sin posts programados</span>'
+          : fmtHTML}
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+/* ── MODAL ADD/EDIT ──────────────────────────────────── */
+function openAddModal(day) {
+  addingDay = day; editingId = null;
+  document.getElementById('modal-title-text').textContent = 'Nuevo post';
+  document.getElementById('f-date').value   = `${day} de ${MONTHS[curMonth]} ${curYear}`;
+  document.getElementById('f-title').value  = '';
+  document.getElementById('f-cat').value    = 'Educación tributaria';
+  document.getElementById('f-format').value = 'Reel';
+  document.getElementById('f-time').value   = '08:00';
+  document.getElementById('f-owner').value  = '';
+  document.getElementById('f-desc').value   = '';
+  document.getElementById('f-status').value = 'Pendiente';
+  document.getElementById('add-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('f-title').focus(), 60);
+}
+function closeAddModal() {
+  document.getElementById('add-overlay').classList.remove('open');
+  addingDay = null; editingId = null;
+}
+function savePost() {
+  const title = document.getElementById('f-title').value.trim();
+  if(!title) { document.getElementById('f-title').focus(); return; }
+  const key = postKey(curYear, curMonth, addingDay);
+  if(!posts[key]) posts[key] = [];
+  const p = {
+    id:     editingId || Date.now().toString(),
+    day:    addingDay,
+    title,
+    cat:    document.getElementById('f-cat').value,
+    format: document.getElementById('f-format').value,
+    time:   document.getElementById('f-time').value,
+    owner:  document.getElementById('f-owner').value.trim(),
+    desc:   document.getElementById('f-desc').value.trim(),
+    status: document.getElementById('f-status').value
+  };
+  if(editingId) {
+    const idx = posts[key].findIndex(x => x.id===editingId);
+    if(idx>=0) posts[key][idx]=p; else posts[key].push(p);
+  } else {
+    posts[key].push(p);
+  }
+  savePosts(); closeAddModal(); renderCal();
+  showToast('Post guardado ✓');
+}
+
+/* ── DETAIL ──────────────────────────────────────────── */
+function showDetail(key, id) {
+  const p = (posts[key]||[]).find(x => x.id===id);
+  if(!p) return;
+  const sc = STATUS_COLOR[p.status]||'#8A9BB0';
+  const cc = CAT_CLASS[p.cat]||'';
+  document.getElementById('detail-content').innerHTML = `
+    <div class="d-header">
+      <span class="d-cat-badge ${cc}">${p.cat}</span>
+      <span class="d-status" style="color:${sc};">
+        <span class="status-dot" style="background:${sc};"></span>${p.status}
+      </span>
+    </div>
+    <div class="d-title">${p.title}</div>
+    <div class="d-grid">
+      <div class="d-field"><div class="lbl">Formato</div><div class="val">${p.format}</div></div>
+      <div class="d-field"><div class="lbl">Hora</div><div class="val">${p.time}</div></div>
+      ${p.owner?`<div class="d-field"><div class="lbl">Responsable</div><div class="val">${p.owner}</div></div>`:''}
+      <div class="d-field"><div class="lbl">Fecha</div><div class="val">${p.day} ${MONTHS[curMonth]} ${curYear}</div></div>
+    </div>
+    ${p.desc?`<div class="d-desc">${p.desc}</div>`:''}
+    <div class="d-actions">
+      <button class="btn-del"     onclick="deletePost('${key}','${id}')">Eliminar</button>
+      <button class="btn-edit"    onclick="editPost('${key}','${id}')">Editar</button>
+      <button class="btn-close-d" onclick="closeDetail()">Cerrar</button>
+    </div>
+  `;
+  document.getElementById('detail-overlay').classList.add('open');
+}
+function closeDetail() { document.getElementById('detail-overlay').classList.remove('open'); }
+function deletePost(key, id) {
+  posts[key] = (posts[key]||[]).filter(p => p.id!==id);
+  savePosts(); closeDetail(); renderCal();
+  showToast('Post eliminado');
+}
+function editPost(key, id) {
+  const p = (posts[key]||[]).find(x => x.id===id);
+  if(!p) return;
+  closeDetail();
+  addingDay=p.day; editingId=id;
+  document.getElementById('modal-title-text').textContent = 'Editar post';
+  document.getElementById('f-date').value   = `${p.day} de ${MONTHS[curMonth]} ${curYear}`;
+  document.getElementById('f-title').value  = p.title;
+  document.getElementById('f-cat').value    = p.cat;
+  document.getElementById('f-format').value = p.format;
+  document.getElementById('f-time').value   = p.time;
+  document.getElementById('f-owner').value  = p.owner;
+  document.getElementById('f-desc').value   = p.desc;
+  document.getElementById('f-status').value = p.status;
+  document.getElementById('add-overlay').classList.add('open');
+}
+
+document.getElementById('add-overlay').addEventListener('click', function(e) { if(e.target===this) closeAddModal(); });
+document.getElementById('detail-overlay').addEventListener('click', function(e) { if(e.target===this) closeDetail(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape') { closeAddModal(); closeDetail(); } });
+
+/* ── CSV EXPORT ──────────────────────────────────────── */
+function exportCSV() {
+  const all = getAllPosts();
+  if(!all.length) { showToast('No hay posts para exportar'); return; }
+  const hdrs = ['Fecha','Día','Título','Categoría','Formato','Hora','Responsable','Estado','Descripción'];
+  const rows = all.map(p => {
+    const date = new Date(curYear, curMonth, p.day);
+    const dn = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'][date.getDay()];
+    return [
+      `${p.day}/${curMonth+1}/${curYear}`, dn,
+      `"${p.title.replace(/"/g,'""')}"`, p.cat, p.format, p.time,
+      p.owner, p.status, `"${(p.desc||'').replace(/"/g,'""')}"`
+    ].join(',');
+  });
+  const csv = [hdrs.join(','), ...rows].join('\n');
+  const blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url;
+  a.download = `parrilla_tributaria_${MONTHS[curMonth]}_${curYear}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  showToast('CSV exportado ✓');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+renderCal();
+</script>
+</body>
+</html>
